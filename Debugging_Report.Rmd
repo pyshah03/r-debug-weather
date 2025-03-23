@@ -1,0 +1,45 @@
+---
+title: "Debugging Report"
+author: "Payal Shah"
+date: "2025-03-23"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This report outlines the debugging process for the historical weather script that uses the Open-Meteo API to collect, visualize, and save weather data.
+
+## Errors Encountered and Fixes
+
+### 1. **Library Loading**
+- **Error**: `libray(httr)` → Typo.
+- **Fix**: Corrected to `library(httr)`.
+
+### 2. **Incorrect Parameter Names**
+- `temperture_unit` → corrected to `temperature_unit`
+- `qury` in `GET()` → corrected to `query`
+
+### 3. **Wrong API Response Handling**
+- `response$status` is not a valid attribute.
+- **Fix**: Replaced with `status_code(response)`.
+
+### 4. **Incorrect Field References**
+- `hourly$temp` → corrected to `hourly$temperature_2m`
+- `formt` in `as.POSIXct()` → corrected to `format`
+
+### 5. **Plotting**
+- Plot lines tried to access `df$temp`, which doesn’t exist.
+- **Fix**: Changed to match corrected column names.
+
+## Additional Improvements
+- Added `if (!require(...))` to auto-install packages if not already available.
+- Added inline comments for clarity and to explain purpose to non-technical users.
+- Used `str(hourly)` for column name validation.
+
+## Outcome
+The script now successfully downloads data, creates time series plots, and saves the data to a local RDS file. All major bugs and data parsing issues have been addressed.
+

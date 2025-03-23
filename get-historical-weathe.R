@@ -1,8 +1,14 @@
-libray(httr)
-if (!require(jsonlite)) install.packages("jsonlite")
+# Load necessary libraries
+if (!require(httr)) install.packages("httr", dependencies = TRUE)
+library(httr)
+
+if (!require(jsonlite)) install.packages("jsonlite", dependencies = TRUE)
 library(jsonlite)
 
+# Define API base URL and query parameters
+
 base_url <- "https://archive-api.open-meteo.com/v1/archive"
+
 params <- list(
   latitude = 40.7128,
   longitude = -74.0060,
@@ -13,13 +19,15 @@ params <- list(
   timezone = "America/New_York"
 )
 
-response <- GET(url = base_url, qury = params)
+response <- GET(url = base_url, query = params)
+# Corrected typo 'qury' to 'query'
 
 if (response$status != 200) {
   stop("Failed to retrieve data. Status code: ", response$status)
 }
 
 json_data <- content(response, as = "text", encoding = "UTF-8")
+
 weather_data <- fromJSON(json_data, flatten = TRUE)
 
 if (!"hourly" %in% names(weather_data)) {
@@ -27,13 +35,19 @@ if (!"hourly" %in% names(weather_data)) {
 }
 
 hourly <- weather_data$hourly
+
+# Check available column names for accuracy
+str(hourly)
+
 df <- data.frame(
   time = as.POSIXct(hourly$time, formt = "%Y-%m-%dT%H:%M", tz = "America/New_York"),
-  temperature = hourly$temp,
+  temperature = hourly$temperature_2m,
   precipitation = hourly$precipitation,
   relative_humidity = hourly$relative_humidity_2m,
   dew_point = hourly$dew_point_2m
 )
+
+# fixed 'temp' to 'temperature_2m'
 
 png(filename = "weather_plots.png", width = 800, height = 800)
 par(mfrow = c(2, 2), mar = c(4, 4, 2, 1))
