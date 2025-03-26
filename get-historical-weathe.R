@@ -22,9 +22,13 @@ params <- list(
 response <- GET(url = base_url, query = params)
 # Corrected typo 'qury' to 'query'
 
-if (response$status != 200) {
-  stop("Failed to retrieve data. Status code: ", response$status)
+
+if (status_code(response) != 200) {
+  stop(paste("Failed to retrieve data. Status code:", status_code(response)))
 }
+
+#changed to use status_code function instead because response$status is not a valid property of an httr response object.
+
 
 json_data <- content(response, as = "text", encoding = "UTF-8")
 
@@ -73,3 +77,4 @@ dev.off()
 saveRDS(df, file = "historical_weather_data.rds")
 
 cat("Data download, visualization, and saving complete.\n")
+
